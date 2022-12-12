@@ -1,0 +1,62 @@
+﻿@using App.Core.Dto
+@model CustomResponseDto<UserRegisterationReportResponseDto>
+@{
+    ViewData["Title"] = "User Registeration Reports";
+}
+@if (Model.IsSuccess)
+{
+
+    <div class="container ">
+        <div class="row">
+            <div class="FilterContainer UserReportFilter">
+                <form asp-action="Login" asp-controller="Auth" class="LoginForm">
+                    <div class="form-group">
+                        <div class="beginDate-area">
+                            <label class="input-label">Begin Date:</label>
+                            <input type="text" id="beginDate">
+                            <span class="bar"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="endDate-area">
+                            <label class="input-label">End Date:</label>
+                            <input type="text" id="endDate">
+                            <span class="bar"></span>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-success userReportFilterBtn">Filter</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+        <div class="homeContainer">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">How many new users are successfully registered</h5>
+                    <p class="card-text">@Model.Data.successFulUserRegisterationCount</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Number of users who were sent a verification code but did not register</h5>
+                    <p class="card-text">@Model.Data.unApprovedUsersCount</p>
+                </div>
+            </div>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Average login time</h5>
+                    <p class="card-text">@Model.Data.avarageRegisterationComplationTime Minute</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        An error occurred.
+    </div>
+}

@@ -1,0 +1,104 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.AuthContainer {
+    display: flex;
+    justify-content: center;
+}
+
+    .AuthContainer form {
+        min-width: 250px;
+        max-width: 500px;
+        width: 100%;
+    }
+
+        .AuthContainer form div {
+            padding: .5rem 1rem;
+        }
+
+        .AuthContainer form .btn {
+            width: 100%
+        }
+
+.homeContainer {
+    display: flex;
+}
+
+    .homeContainer .card {
+        margin: .5rem;
+        max-width: 500px;
+    }
+
+        .homeContainer .card .card-title {
+            text-align: center;
+        }
+
+        .homeContainer .card .card-text {
+            text-align: center;
+            font-weight: bolder;
+            font-size: 1.5rem;
+        }
+
+.UserReportFilter .LoginForm {
+    display: flex;
+}
+
+    .UserReportFilter .LoginForm .form-group, .UserReportFilter .LoginForm .button-group {
+        margin: 1rem;
+    }
+
+    .UserReportFilter .LoginForm label {
+        margin-right: .5rem;
+    }
+
+.loading-overlay {
+    display: block;
+    position: absolute;
+    vertical-align: middle;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0;
+    text-align: center;
+    z-index: 1000;
+}
+
+    .loading-overlay > i.button-loader {
+        -moz-transition: all 0.3s ease;
+        -o-transition: all 0.3s ease;
+        -webkit-transition: all 0.3s ease;
+        transition: all 0.3s ease;
+        z-index: 5;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 30px;
+        visibility: visible;
+        opacity: 1;
+        -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=1);
+        filter: alpha(opacity=1);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIA0KICAgIGNsYXNzPSJzdmctbG9hZGVyIiANCiAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIA0KICAgIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiANCiAgICB4PSIwcHgiIA0KICAgIHk9IjBweCINCiAgICB2aWV3Qm94PSIwIDAgODAgODAiIA0KICAgIHhtbDpzcGFjZT0icHJlc2VydmUiDQogICAgc3R5bGU9IndpZHRoOjMwcHg7IGhlaWdodDozMHB4OyINCiAgICA+DQoNCiAgICA8cGF0aA0KICAgICAgICBpZD0ic3Bpbm5lciIgDQogICAgICAgIGZpbGw9IiM2NjY2NjYiDQogICAgICAgIGQ9Ik00MCw3MkMyMi40LDcyLDgsNTcuNiw4LDQwQzgsMjIuNCwyMi40LDgsNDAsOGMxNy42LDAsMzIsMTQuNCwzMiwzMmMwLDEuMS0wLjksMi0yLDIgcy0yLTAuOS0yLTJjMC0xNS40LTEyLjYtMjgtMjgtMjhTMTIsMjQuNiwxMiw0MHMxMi42LDI4LDI4LDI4YzEuMSwwLDIsMC45LDIsMlM0MS4xLDcyLDQwLDcyeiI+DQoNCiAgICAgICAgPGFuaW1hdGVUcmFuc2Zvcm0NCiAgICAgICAgICAgIGF0dHJpYnV0ZVR5cGU9InhtbCINCiAgICAgICAgICAgIGF0dHJpYnV0ZU5hbWU9InRyYW5zZm9ybSINCiAgICAgICAgICAgIHR5cGU9InJvdGF0ZSINCiAgICAgICAgICAgIGZyb209IjAgNDAgNDAiDQogICAgICAgICAgICB0bz0iMzYwIDQwIDQwIg0KICAgICAgICAgICAgZHVyPSIwLjZzIg0KICAgICAgICAgICAgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiDQogICAgICAgIC8+DQogICAgPC9wYXRoPg0KPC9zdmc+);
+    }
