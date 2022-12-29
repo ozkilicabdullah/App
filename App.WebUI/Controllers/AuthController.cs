@@ -98,8 +98,6 @@ namespace App.WebUI.Controllers
                 await HttpContext.SignInAsync(principal);
                 return RedirectToAction("Index", "Home");
             }
-            else
-                return RedirectToAction("Error", "Home");
             return Json(operationResult);
         }
 

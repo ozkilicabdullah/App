@@ -16,7 +16,6 @@ namespace App.API.Controllers
         #region Ctor
         private readonly IMapper _mapper;
         private readonly IUserService _userService;
-
         public UserController(IMapper mapper, IUserService userService)
         {
             _mapper = mapper;
@@ -29,7 +28,7 @@ namespace App.API.Controllers
         [HttpGet("UserInfo")]
         public async Task<IActionResult> GetCurrentUser()
         {
-            var email = HttpContext.User.Identity.Name;
+            string email = HttpContext.User.Identity.Name;
             if (string.IsNullOrEmpty(email))
                 return CreateActionResult(CustomResponseDto<UserDto>.Fail(400, "User not found!"));
 
@@ -48,7 +47,7 @@ namespace App.API.Controllers
         {
             var existUser = await _userService.GetUserByEmail(userCreateDto.Email);
             if (existUser != null)
-                return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(400, "There is a user for this email. If you forgot your password, use the password usage step!"));
+                return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(400, "There is a user for this email. If you forgot your password, use the reset password usage step!"));
 
             // Prepera user model 
             var preperadSecurityUserDto = await _userService.PrepareRegisterModel(_mapper.Map<UserDto>(userCreateDto));
@@ -79,7 +78,7 @@ namespace App.API.Controllers
             var user = await _userService.ForgetMyPassword(forgetPasswordDto);
             await _userService.UpdateAsync(user);
             return CreateActionResult(CustomResponseDto<NoContentDto>.Success(204));
-        }
+        } 
 
         [HttpPost("ChangePasswordForForgotten")]
         public async Task<IActionResult> ChangePasswordForForgotten(ChangePasswordForForgottenDto changePasswordForForgottenDto)
@@ -87,22 +86,11 @@ namespace App.API.Controllers
             var user = await _userService.GetUserByEmail(changePasswordForForgottenDto.Email);
             if (user == null || user.ResetPasswordSecretKey != changePasswordForForgottenDto.SecretKey)
                 return CreateActionResult(CustomResponseDto<NoContentDto>.Fail(400, "User not found!"));
+
             user.Password = SecureOperations.MD5Hash(changePasswordForForgottenDto.Password);
             user.ForgetPaswordSecretKey = null;
             await _userService.UpdateAsync(user);
             return CreateActionResult(CustomResponseDto<NoContentDto>.Success(204));
-        }
-
-        [HttpPost("UserRegisterationReports")]
-        public async Task<IActionResult> UserRegisterationReports(UserRegisterationReportRequestDto userRegisterationReportRequestDto)
-        {
-            DateTime beginDate = Convert.ToDateTime(userRegisterationReportRequestDto.BeginDate);
-            DateTime endDate = Convert.ToDateTime(userRegisterationReportRequestDto.EndDate);
-            UserRegisterationReportResponseDto response = new();
-            response.unApprovedUsersCount = await _userService.UnApprovedUsers(beginDate, endDate);
-            response.successFulUserRegisterationCount = await _userService.SuccessFulUserRegisteration(beginDate, endDate);
-            response.avarageRegisterationComplationTime = await _userService.AvarageRegisterationComplationTime(beginDate, endDate);
-            return CreateActionResult(CustomResponseDto<UserRegisterationReportResponseDto>.Success(200, response));
         }
         #endregion
     }

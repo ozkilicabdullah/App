@@ -56,7 +56,7 @@ namespace App.Service.Services.SenderService.Email
         public async Task<CustomResponseDto<NoContentDto>> Send(EmailSendRequestDto emailSendRequestDto)
         {
             // get sender setting
-             var senderSettings = await GetSenderSettings(emailSendRequestDto.SendingContentType);
+            var senderSettings = await GetSenderSettings(emailSendRequestDto.SendingContentType);
             if (!senderSettings.IsSuccess)
                 return CustomResponseDto<NoContentDto>.Fail(400, senderSettings.Errors);
 
@@ -76,11 +76,15 @@ namespace App.Service.Services.SenderService.Email
 
             return CustomResponseDto<NoContentDto>.Success(204);
         }
-
         private EmailConfigurationDto MapToEmailConfiguration(EmailSetting emailSetting)
         {
             if (emailSetting == null) return null;
-            var emailConfigurationmappedDto = new EmailConfigurationDto() { SendingProtokol = emailSetting.SendingProtokol,FromName=emailSetting.Name,FromEmail=emailSetting.SenderEmail };
+            var emailConfigurationmappedDto = new EmailConfigurationDto()
+            {
+                SendingProtokol = emailSetting.SendingProtokol,
+                FromName = emailSetting.Name,
+                FromEmail = emailSetting.SenderEmail
+            };
 
             switch (emailSetting.SendingProtokol)
             {

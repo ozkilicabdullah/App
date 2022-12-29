@@ -38,7 +38,7 @@ builder.Services.AddAutoMapper(typeof(MapProfile));
 
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositoryImp<>));
+builder.Services.AddSingleton(typeof(IGenericRepository<>), typeof(GenericRepositoryImp<>));
 builder.Services.AddScoped(typeof(IGenericService<>), typeof(GenericServiceImp<>));
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationServiceImp>();
@@ -100,7 +100,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-app.UseCustomException();
+app.UseCustomException(); // fluent validation
 app.UseAuthorization();
 
 app.MapControllers();

@@ -9,8 +9,5 @@ namespace App.Core.Services
         Task<UserDto> PrepareRegisterModel(UserDto user);
         Task<CustomResponseDto<User>> ConfirmMail(ConfirmUserMailDto confirmUserMailDto);
         Task<User> ForgetMyPassword(ForgetPasswordDto forgetPasswordDto);
-        Task<int> SuccessFulUserRegisteration(DateTime BeginDate, DateTime EndDate);
-        Task<int> UnApprovedUsers(DateTime BeginDate, DateTime EndDate);
-        Task<int> AvarageRegisterationComplationTime(DateTime BeginDate, DateTime EndDate);
     }
 }

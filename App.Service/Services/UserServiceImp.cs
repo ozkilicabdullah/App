@@ -18,6 +18,7 @@ namespace App.Service.Services
         private readonly IEmailSettingService _emailSettingService;
         private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserServiceImp(IGenericRepository<User> repository, IUnitOfWork unitOfWork, IUserRepository userRepository, IEmailTemplateService emailTemplateService, IEmailSettingService emailSettingService, IMapper mapper, IConfiguration configuration) : base(repository, unitOfWork)
         {
@@ -27,6 +28,7 @@ namespace App.Service.Services
             _emailSenderService = new EmailSenderService(_emailSettingService, _emailTemplateService);
             _mapper = mapper;
             _configuration = configuration;
+            _unitOfWork = unitOfWork;
         }
         public async Task<CustomResponseDto<NoContentDto>> ChangeUserPassword(ChangeUserPasswordDto changeUserPasswordDto)
         {
@@ -34,8 +36,12 @@ namespace App.Service.Services
             if (user == null)
                 return CustomResponseDto<NoContentDto>.Fail(400, "User not found!");
 
+            #region Update User
             user.Password = changeUserPasswordDto.Password;
             _userRepository.Update(user);
+            await _unitOfWork.CommitAsync();
+            #endregion
+
             return CustomResponseDto<NoContentDto>.Success(200);
         }
         public async Task<CustomResponseDto<User>> ConfirmMail(ConfirmUserMailDto confirmUserMailDto)
@@ -43,6 +49,7 @@ namespace App.Service.Services
             var user = await _userRepository.ConfirmMailForUser(confirmUserMailDto);
             if (user == null)
                 return CustomResponseDto<User>.Fail(400, "User not found!");
+
             return CustomResponseDto<User>.Success(200, user);
         }
         public async Task<User> GetUserByEmail(string email)
@@ -51,7 +58,6 @@ namespace App.Service.Services
         }
         public async Task<UserDto> PrepareRegisterModel(UserDto user)
         {
-
             user.Password = SecureOperations.MD5Hash(user.Password);
             user.EmailConfirmationSecretKey = SecureOperations.MD5Hash(string.Concat(user.Name, user.Email));
             user.IsEmailConfirmed = false;
@@ -72,18 +78,27 @@ namespace App.Service.Services
             };
             emailSendRequestDto.AddReplacePair(replaceItem.Key, replaceItem.Value);
             var response = await _emailSenderService.Send(emailSendRequestDto);
+
             if (!response.IsSuccess)
                 return false; // The process for resending must be improved.
             return true;
         }
+
         public async Task<User> ForgetMyPassword(ForgetPasswordDto forgetPasswordDto)
         {
             var user = await _userRepository.GetUserByEmail(forgetPasswordDto.Email);
             if (user == null)
                 return null;
+
             string forgetMyPasswordMailUIRoute = _configuration.GetSection("ForgetMyPasswordMailUIRoute").Value;
             user.ResetPasswordSecretKey = SecureOperations.MD5Hash(String.Concat(user.Password, user.Email, (DateTime.Now.Minute * DateTime.Now.Second).ToString()));
-            ReplaceItem replaceItem = new() { Key = "ResetPasswordSecretKey", Value = string.Concat(forgetMyPasswordMailUIRoute, user.ResetPasswordSecretKey, "&Email=", user.Email) };
+            ReplaceItem replaceItem = new()
+            {
+                Key = "ResetPasswordSecretKey",
+                Value = string.Concat(forgetMyPasswordMailUIRoute,
+                user.ResetPasswordSecretKey,
+                "&Email=", user.Email)
+            };
             EmailSendRequestDto emailSendRequestDto = new EmailSendRequestDto()
             {
                 ToName = user.Name,
@@ -94,39 +109,6 @@ namespace App.Service.Services
             emailSendRequestDto.AddReplacePair(replaceItem.Key, replaceItem.Value);
             await _emailSenderService.Send(emailSendRequestDto);
             return user;
-        }
-        /// <summary>
-        /// How many new users were successfully registered over a period of time (e.g. 1 day)
-        /// </summary>
-        /// <param name="BeginDate"></param>
-        /// <param name="EndDate"></param>
-        /// <returns></returns>
-        public async Task<int> SuccessFulUserRegisteration(DateTime BeginDate, DateTime EndDate)
-        {
-            var record = await _userRepository.SuccessFulUserRegisteration(BeginDate, EndDate);
-            return record.SuccessFullRegisterationUserCount;
-        }
-        /// <summary>
-        /// How many users who were sent a verification code but did not register after 1 day
-        /// </summary>
-        /// <param name="BeginDate"></param>
-        /// <param name="EndDate"></param>
-        /// <returns></returns>
-        public async Task<int> UnApprovedUsers(DateTime BeginDate, DateTime EndDate)
-        {
-            var record = await _userRepository.UnApprovedUsers(BeginDate, EndDate);
-            return record.UnApprovedUsersCount;
-        }
-        /// <summary>
-        /// How long it takes to complete login (in seconds, average for a given day)
-        /// </summary>
-        /// <param name="BeginDate"></param>
-        /// <param name="EndDate"></param>
-        /// <returns></returns>
-        public async Task<int> AvarageRegisterationComplationTime(DateTime BeginDate, DateTime EndDate)
-        {
-            var record = await _userRepository.AvarageRegisterationComplationTime(BeginDate, EndDate);
-            return record.AvarageRegisterationComplationTime;
         }
     }
 }

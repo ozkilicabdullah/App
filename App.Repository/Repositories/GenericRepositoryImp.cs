@@ -18,7 +18,6 @@ namespace App.Repository.Repositories
 
         public async Task AddAsync(T entity)
         {
-
             await _dbSet.AddAsync(entity);
         }
 
@@ -44,7 +43,6 @@ namespace App.Repository.Repositories
 
         public void Remove(T entity)
         {
-
             _dbSet.Remove(entity);
         }
 
